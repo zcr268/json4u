@@ -16,12 +16,15 @@ import {
   initialViewport,
 } from "@/lib/graph/layout";
 import computeVirtualGraph from "@/lib/graph/virtual";
-import { Tree } from "@/lib/parser";
+import { lastKey } from "@/lib/idgen";
+import { getRawValue, isIterable, Tree } from "@/lib/parser";
 import { genDomString } from "@/lib/table";
 import { type FunctionKeys } from "@/lib/utils";
 import { type Viewport } from "@xyflow/react";
+import fuzzysort from "fuzzysort";
 import { keyBy } from "lodash-es";
 import { createStore } from "zustand/vanilla";
+import { type SearchResult } from "./types";
 
 export interface ViewState {
   tree: Tree;
@@ -36,6 +39,7 @@ export interface ViewState {
   createGraph: () => { graph: Graph; renderable: Graph };
   setGraphSize: (width?: number, height?: number) => { renderable: Graph; changed: boolean };
   setGraphViewport: (viewport: Viewport) => { renderable: Graph; changed: boolean };
+  search: (input: string) => SearchResult[];
 }
 
 const initialStates: Omit<ViewState, FunctionKeys<ViewState>> = {
@@ -122,6 +126,30 @@ const useViewStore = createStore<ViewState>((set, get) => ({
     set({ graph, graphViewport: viewport });
     return { renderable, changed };
   },
+
+  search(input: string) {
+    const { tree } = get();
+    const nodes = Object.values(tree.nodeMap);
+
+    const keysResults = fuzzysort.go(input, nodes, {
+      keys: [(node) => lastKey(node.id), (node) => (!isIterable(node) && getRawValue(node)) || ""],
+      threshold: 0.5,
+    });
+
+    const results = keysResults.map((r) => {
+      const node = r.obj;
+      const isMatchKey = r[0].score > r[1].score;
+
+      return {
+        matchType: isMatchKey ? "key" : "value",
+        id: node.id,
+        label: isMatchKey ? lastKey(node.id) : getRawValue(node) ?? "",
+        result: isMatchKey ? r[0] : r[1],
+      } satisfies SearchResult;
+    });
+
+    return results;
+  },
 }));
 
 export const getViewState = useViewStore.getState;
@@ -161,4 +189,9 @@ export function triggerGraphFoldSiblings(nodeId: string, fold: boolean) {
 export function computeGraphRevealPosition(nodeId: string) {
   const { graph, graphWidth, graphHeight } = getViewState();
   return computeRevealPosition(graphWidth, graphHeight, graph, nodeId);
+}
+
+export function searchInView(input: string) {
+  const { search } = getViewState();
+  return search(input);
 }

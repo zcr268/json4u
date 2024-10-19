@@ -234,6 +234,10 @@ export function useEditor(kind: Kind = "main") {
   return useEditorStore((state) => state[kind]);
 }
 
+export function useWorker() {
+  return useEditorStore((state) => state.worker);
+}
+
 export function getEditorState() {
   return useEditorStore.getState();
 }

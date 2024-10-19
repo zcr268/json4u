@@ -73,11 +73,22 @@ export function triggerFoldSiblings(graph: Graph, nodeId: string, fold: boolean)
   return generateVirtualGraph(graph);
 }
 
-export function computeRevealPosition(width: number, height: number, graph: Graph, nodeId: string): XYPosition {
+export function computeRevealPosition(
+  width: number,
+  height: number,
+  graph: Graph,
+  nodeId: string,
+): XYPosition & { changed: boolean } {
   // must >= toolbar's height, otherwise toolbar will not in viewport
   const gap = 25;
-  const node = graph.nodeMap?.[nodeId]!;
+  const node = graph.nodeMap?.[nodeId];
+
+  if (!node) {
+    console.error("computeRevealPosition (node not found):", nodeId, graph.nodeMap);
+    return { x: 0, y: 0, changed: false };
+  }
+
   const x = node.position.x + Math.min(node.data.width / 2, width / 2 - gap);
   const y = node.position.y + Math.min(node.data.height / 2, height / 2 - gap);
-  return { x, y };
+  return { x, y, changed: true };
 }

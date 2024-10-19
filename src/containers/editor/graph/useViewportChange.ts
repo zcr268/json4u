@@ -71,8 +71,11 @@ export function useRevealNode() {
   useEffect(() => {
     if (worker && id) {
       (async () => {
-        const { x, y } = await worker.computeGraphRevealPosition(id);
-        setCenter(x, y, { duration: 100, zoom: getZoom() });
+        const { x, y, changed } = await worker.computeGraphRevealPosition(id);
+
+        if (changed) {
+          setCenter(x, y, { duration: 100, zoom: getZoom() });
+        }
       })();
     }
   }, [worker, id, version]);

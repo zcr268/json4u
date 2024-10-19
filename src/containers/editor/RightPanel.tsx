@@ -4,6 +4,7 @@ import * as React from "react";
 import { useState } from "react";
 import { Container, ContainerContent, ContainerHeader } from "@/components/Container";
 import { Button } from "@/components/ui/button";
+import ViewSearchInput from "@/components/ui/search/ViewSearchInput";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toggle } from "@/components/ui/toggle";
@@ -86,6 +87,7 @@ function Buttons({ viewMode }: { viewMode: ViewMode }) {
           <SwapButton variant="icon-outline" className="px-2" />
         </>
       )}
+      {viewMode === ViewMode.Graph && <ViewSearchInput />}
       <FullScreenButton />
     </div>
   );

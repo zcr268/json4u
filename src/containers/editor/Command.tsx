@@ -36,7 +36,7 @@ export function CommandSearch() {
         <Cmd>
           <CommandInput className="h-7" />
           <CommandList>
-            <CommandEmpty>{t("no_command_found")}</CommandEmpty>
+            <CommandEmpty>{t("no_results_found")}</CommandEmpty>
             <CommandGroup>
               {commands.map(({ name: label, Icon }) => (
                 <CommandItem
