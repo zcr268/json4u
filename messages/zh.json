@@ -16,6 +16,7 @@
   "urlToJson": "URL 转 JSON",
   "swapLeftRight": "交换左右两侧文本",
   "show_jq": "展示 jq 输入框",
+  "show_json_path": "展示 JSON path 输入框",
   "Search Command": "搜索命令",
   "search_json": "搜索 JSON",
   "no_results_found": "没有找到匹配项",

@@ -52,7 +52,7 @@ function useExecJq() {
   };
 }
 
-const JqInput: FC = forwardRef<ElementRef<typeof Input>, ComponentPropsWithoutRef<typeof Input>>(
+const JsonPathInput: FC = forwardRef<ElementRef<typeof Input>, ComponentPropsWithoutRef<typeof Input>>(
   ({ className, ...props }, ref) => {
     const t = useTranslations();
     const usable = useUserStore((state) => state.usable("jqExecutions"));
@@ -60,7 +60,7 @@ const JqInput: FC = forwardRef<ElementRef<typeof Input>, ComponentPropsWithoutRe
 
     return (
       <InputBox
-        id="jq-input"
+        id="json-path-input"
         initial={jqInit}
         run={execJq}
         placeholderFn={(loading) => (loading ? t("jq_loading") : usable ? t("jq_placeholder") : t("jq_disabled"))}
@@ -70,5 +70,5 @@ const JqInput: FC = forwardRef<ElementRef<typeof Input>, ComponentPropsWithoutRe
   },
 );
 
-JqInput.displayName = "JqInput";
-export default JqInput;
+JsonPathInput.displayName = "JsonPathInput";
+export default JsonPathInput;
