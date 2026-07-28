@@ -5,14 +5,12 @@ import Logo from "@/components/icons/Logo";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Typography from "@/components/ui/typography";
-import AccountButton from "@/containers/editor/sidenav/AccountButton";
-import { isCN, version } from "@/lib/env";
+import { version } from "@/lib/env";
 import { useTranslations } from "next-intl";
 
 export default function Header() {
   const t = useTranslations("Home");
   const items = [
-    // { href: "/#pricing", title: t("Pricing") },
     { href: "/tutorial", title: t("Tutorial") },
     { href: "/changelog", title: t("Changelog") },
   ];
@@ -42,7 +40,6 @@ export default function Header() {
         </div>
         <div className="ml-auto" />
         <div className="flex items-center h-full py-3 gap-4">
-          {!isCN && <AccountButton notOnSideNav avatarClassName="w-8 h-8" />}
           <LinkButton href="/editor" variant="default">
             {t("Editor")}
           </LinkButton>

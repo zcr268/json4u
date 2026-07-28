@@ -11,11 +11,6 @@ test.describe("Sidenav", () => {
     await expect(page.getByRole("link", { name: "Try it now" })).toBeVisible();
   });
 
-  test("click log in", async ({ page }) => {
-    await page.getByRole("button", { name: "Log in" }).click();
-    await expect(page.locator("text=Login with Google")).toBeVisible();
-  });
-
   test("import JSON file", async ({ page }) => {
     const editor = await getEditor(page);
     await importJsonFile(page, "nest.txt");

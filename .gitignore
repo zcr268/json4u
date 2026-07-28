@@ -51,14 +51,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Sentry Config File
-.sentryclirc
-
 # Million Lint
 .million
 
-# Sentry Config File
-.env.sentry-build-plugin
 node_modules/
 /test-results/
 /playwright-report/

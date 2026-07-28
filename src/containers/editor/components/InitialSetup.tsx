@@ -5,9 +5,7 @@ import { px2num } from "@/lib/utils";
 import { type MyWorker } from "@/lib/worker/worker";
 import { useConfigFromCookies } from "@/stores/hook";
 import { useStatusStore } from "@/stores/statusStore";
-import { useUserStore } from "@/stores/userStore";
 import { wrap } from "comlink";
-import { useShallow } from "zustand/shallow";
 
 const measureStr = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -34,15 +32,7 @@ export default function InitialSetup() {
 
 function useInitial() {
   const cc = useConfigFromCookies();
-  const { user, updateActiveOrder } = useUserStore(
-    useShallow((state) => ({
-      user: state.user,
-      updateActiveOrder: state.updateActiveOrder,
-    })),
-  );
-
   useEffect(() => {
-    updateActiveOrder(user);
     useStatusStore.setState({ _hasHydrated: true, ...cc });
 
     // initial worker

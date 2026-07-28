@@ -4,7 +4,6 @@ import { config } from "@/lib/graph/layout";
 import type { EdgeWithData, NodeWithData } from "@/lib/graph/types";
 import { useStatusStore } from "@/stores/statusStore";
 import { useTreeMeta } from "@/stores/treeStore";
-import { useUserStore } from "@/stores/userStore";
 import { useEdgesState, useNodesState, useReactFlow } from "@xyflow/react";
 import { XYPosition } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -26,17 +25,10 @@ export default function useVirtualGraph() {
   ]);
 
   const { setViewport } = useReactFlow();
-  const { count, usable } = useUserStore(
-    useShallow((state) => ({
-      count: state.count,
-      usable: state.usable("graphModeView"),
-    })),
-  );
-  const { isGraphView, resetFoldStatus, setShowPricingOverlay } = useStatusStore(
+  const { isGraphView, resetFoldStatus } = useStatusStore(
     useShallow((state) => ({
       isGraphView: state.viewMode === ViewMode.Graph,
       resetFoldStatus: state.resetFoldStatus,
-      setShowPricingOverlay: state.setShowPricingOverlay,
     })),
   );
 
@@ -45,13 +37,6 @@ export default function useVirtualGraph() {
       console.l("skip graph render:", isGraphView, treeVersion);
       return;
     }
-
-    if (!usable) {
-      console.l("skip graph render because reach out of free quota.");
-      setShowPricingOverlay(true);
-      return;
-    }
-
     (async () => {
       const {
         graph: { levelMeta },
@@ -81,9 +66,8 @@ export default function useVirtualGraph() {
       ];
 
       console.l("create a new graph:", treeVersion, translateExtentRef.current, nodes.length, edges.length);
-      nodes.length > 0 && count("graphModeView");
     })();
-  }, [usable, isGraphView, treeVersion, needReset]);
+  }, [isGraphView, treeVersion, needReset]);
 
   return {
     nodes,

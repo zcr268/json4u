@@ -33,7 +33,6 @@ export default function Footer() {
         <div className="flex items-center gap-4 sm:gap-8 sm:ml-0">
           <Legal />
         </div>
-        {isCN && <Upyun />}
         <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 sm:ml-auto">
           {items.map((item, i) => (
             <FooterLink key={i} title={item.title} href={item.href} />
@@ -41,26 +40,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
-}
-
-function Upyun() {
-  return (
-    <FooterLink
-      nofollow
-      href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral"
-      title={
-        <div className="inline-flex items-center justify-center h-6">
-          <span className="flex">{"本网站由"}</span>
-          <img
-            src="https://o.json4u.cn/upyun-logo.png"
-            className="h-full px-0.5 mx-0.5 bg-blue-500"
-            alt="又拍云 logo"
-          />
-          <span>{"提供CDN加速/云存储服务"}</span>
-        </div>
-      }
-    />
   );
 }
 

@@ -1,6 +1,5 @@
 import NextBundleAnalyzer from "@next/bundle-analyzer";
 import createMDX from "@next/mdx";
-import { withSentryConfig } from "@sentry/nextjs";
 import createJiti from "jiti";
 import createNextIntlPlugin from "next-intl/plugin";
 import { fileURLToPath } from "node:url";
@@ -13,7 +12,6 @@ import path from "path";
 const jiti = createJiti(fileURLToPath(import.meta.url));
 jiti("./src/lib/env");
 
-const isDev = process.env.NODE_ENV === "development";
 const isCN = /\.cn(:3000)?$/.test(process.env.NEXT_PUBLIC_APP_URL);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -26,9 +24,6 @@ const nextConfig = {
   output: isCN ? "standalone" : undefined,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   experimental: {
-    serverActions: {
-      allowedOrigins: ["json4u.com", "*.json4u.com", "json4u.cn", "*.json4u.cn"],
-    },
     optimizePackageImports: [
       "react-use",
       "@next/mdx",
@@ -36,17 +31,11 @@ const nextConfig = {
       "lucide-react",
       "monaco-editor",
       "@xyflow/react",
-      "@supabase/auth-ui-react",
-      "@supabase/auth-ui-shared",
-      "@supabase/supabase-js",
-      "@sentry/react",
-      "@sentry/nextjs",
-      "@sentry/utils",
       "zod",
       "usehooks-ts",
     ],
   },
-  webpack(config, { dev, isServer, webpack }) {
+  webpack(config, { isServer }) {
     if (!isServer) {
       config.resolve.fallback = { fs: false };
       config.resolve.alias = {
@@ -56,16 +45,6 @@ const nextConfig = {
       config.output.webassemblyModuleFilename = "static/wasm/[modulehash].wasm";
       // can't use experiments
       // config.experiments = { asyncWebAssembly: true };
-
-      config.plugins.push(
-        new webpack.DefinePlugin({
-          __SENTRY_DEBUG__: false,
-          __SENTRY_TRACING__: false,
-          __RRWEB_EXCLUDE_IFRAME__: true,
-          __RRWEB_EXCLUDE_SHADOW_DOM__: true,
-          __SENTRY_EXCLUDE_REPLAY_WORKER__: true,
-        }),
-      );
     }
 
     return config;
@@ -80,47 +59,4 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 
 const config = withBundleAnalyzer(withNextIntl(withMDX(nextConfig)));
 
-const enableSourceMap = !!process.env.SENTRY_AUTH_TOKEN;
-
-export default withSentryConfig(config, {
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options
-  org: "loggerhead",
-  project: "json4u",
-  enable: !isDev,
-  authToken: enableSourceMap ? process.env.SENTRY_AUTH_TOKEN : undefined,
-  // avoid build failed when miss SENTRY_AUTH_TOKEN
-  sourcemaps: {
-    disable: !enableSourceMap,
-  },
-  // Only print logs for uploading source maps in CI
-  silent: !process.env.CI,
-
-  // For all available options, see:
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-  ignore: [
-    "__tests__",
-    "e2e",
-    "dist",
-    "node_modules",
-    "public",
-    ".next",
-    ".vercel",
-    ".vscode",
-    ".idea",
-    ".gitignore",
-    ".DS_Store",
-    "*.log",
-    ".env.*",
-    "sentry.*.config.js",
-    "README.md",
-    "yarn.lock",
-  ],
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
-  // Transpiles SDK to be compatible with IE11 (increases bundle size)
-  transpileClientSDK: false,
-  telemetry: false,
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
-});
+export default config;

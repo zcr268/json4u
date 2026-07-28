@@ -7,7 +7,6 @@ import { ArrowDownNarrowWide, ArrowDownWideNarrow, type LucideIcon } from "lucid
 import type { TranslationValues, useTranslations } from "next-intl";
 import { create } from "zustand";
 import { getStatusState } from "./statusStore";
-import { getUserState } from "./userStore";
 
 export interface Command {
   id: MessageKey;
@@ -183,20 +182,11 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
 
   async compare() {
     const { translations: t, comparer } = get();
-    const { usable, count } = getUserState();
-    const { setShowPricingOverlay } = getStatusState();
     const { diffPairs, isTextCompare } = await comparer!.compare();
     const hasDiff = diffPairs.length > 0;
-    const showPricing = hasDiff && isTextCompare && !usable("textComparison");
-
-    if (showPricing) {
-      setShowPricingOverlay(true);
-    } else {
-      comparer!.highlightDiff(diffPairs, isTextCompare);
-    }
+    comparer!.highlightDiff(diffPairs, isTextCompare);
 
     if (hasDiff) {
-      isTextCompare && count("textComparison");
       // @ts-ignore
       toastWarn(t!(isTextCompare ? "with_text_diff" : "with_diff"), "compare");
     } else {

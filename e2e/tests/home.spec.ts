@@ -11,11 +11,6 @@ test.describe("Home page", () => {
     await getEditor(page);
   });
 
-  test("go to login", async ({ page }) => {
-    await page.getByRole("link", { name: /Log in/ }).click();
-    await expect(page.locator("text=Login with Google")).toBeVisible();
-  });
-
   test("go to terms", async ({ page }) => {
     await page.getByRole("link", { name: /Terms/ }).click();
     await expect(page.getByRole("heading", { name: "AGREEMENT TO OUR LEGAL TERMS" })).toBeVisible();
